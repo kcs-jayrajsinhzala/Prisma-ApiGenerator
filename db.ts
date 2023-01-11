@@ -145,12 +145,8 @@ export const dbConnect = async (dbInfo: DatabaseInfo) => {
             let name = data[i]["name"]
 
             if (isDiffrence) {
-                console.log("name", name);
                 for (let i of diffmodelList) {
-                    console.log("i", i);
                     if (name === i) {
-                        console.log("diff", name);
-
                         models[name] = `${name.charAt(0).toUpperCase() + name.slice(1)}`
                         createAllFiles(name, fields)
                     }

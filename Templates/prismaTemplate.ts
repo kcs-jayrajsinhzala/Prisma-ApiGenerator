@@ -42,8 +42,6 @@ datasource db {
     url      = "${driverName}://${dbInfo.dbUser}:${dbInfo.dbPassword}@${dbInfo.dbHost}/${dbInfo.dbName}"
 }`
     }
-    console.log(template);
-
 
     return template
 }
