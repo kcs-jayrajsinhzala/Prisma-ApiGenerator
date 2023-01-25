@@ -83,15 +83,17 @@ import { Filter${copyClassName}Dto } from './dto/filter-${name}.dto';\n`
             const ${name}Details = await prisma.${name}.create({
                 data:{ ...create${copyClassName}${checkGraphQL} }
             });
-            if(!${name}Details){
-                throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+
+            if (!${name}Details) {
+                return { status: 204, message: "No data found",  data: ${name}Details }
             }
         
-            return ${name}Details;
-        } catch (err) {
-            throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
-            }
-        }  
+            return { status: 201, message: "created successfully",  data: ${name}Details }
+        } 
+        catch (err) {
+            return { status: 403, message: err.message, data: [] }
+        }
+    }  
 `
         }
         else {
@@ -109,10 +111,10 @@ import { Filter${copyClassName}Dto } from './dto/filter-${name}.dto';\n`
                 data: { ...update${copyClassName}${checkGraphQL} },
             }) 
 
-            return updated${copyClassName};
+            return { status: 200, message: "data updated successfully",  data: updated${copyClassName} }
         }
         catch (err){
-            throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+            return { status: 403, message: err.message, data: [] }
         }
     }
 `
@@ -126,12 +128,6 @@ import { Filter${copyClassName}Dto } from './dto/filter-${name}.dto';\n`
     const checkGraphQL = apiType === "GraphQL" ? "Input" : apiType === "RestAPI" ? "Dto" : ""
 
     let template = ``
-
-    const backup = `    limit:+filter${copyClassName}${checkGraphQL}.limit,
-    offset,
-    where: whereCondition,
-    ${data ? `${data},` : ''}
-    order:order`
 
     template += `import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
@@ -161,39 +157,49 @@ ${checkCreate(count)}
                 whereclause[filter${copyClassName}${checkGraphQL}.columnName] = { contains: filter${copyClassName}${checkGraphQL}.search }
             }
       
-            const ${name} = await prisma.${name}.findMany({
+            const ${name}Details = await prisma.${name}.findMany({
                 where: whereclause,
                 skip: offset,
                 take: +limit,
                 orderBy: order
             });
-            return ${name}
+
+            if (!${name}Details || ${name}Details.length === 0) {
+                return { status: 204, message: "No data found",  data: ${name}Details }
+            }
+            return { status: 200, message: "data found",  data: ${name}Details }
         }
         catch (err){
-            throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+            return { status: 403, message: err.message, data: [] }
         }
     }
 
     async findOne(${primaryName}: ${primaryType}) {
         try {
-            const ${name} = await prisma.${name}.findUnique({
+            const ${name}Details = await prisma.${name}.findUnique({
               where: {
                 ${primaryName}: ${primaryType === "number" ? "+" : ""}${primaryName},
               },
             });
-            return ${name}
-      
-          } catch (err) {
-            throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
-          }
+
+            if (!${name}Details) {
+                return { status: 204, message: "No data found",  data: ${name}Details }
+            }
+            return { status: 200, message: "data found",  data: ${name}Details }
+          } 
+        catch (err) {
+            return { status: 403, message: err.message, data: [] }
+        }
     }
 ${checkUpdate(count)}
     async remove(${primaryName}: ${primaryType}) {
         try{
-            return await prisma.${name}.delete({ where: { ${primaryName}: ${primaryName} } });
+            const deleted${copyClassName} = await prisma.${name}.delete({ where: { ${primaryName}: ${primaryName} } });
+            
+            return { status: 200, message: "data deleted successfully",  data: deleted${copyClassName} }
         }
         catch (err){
-            throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+            return { status: 403, message: err.message, data: [] }
         }
     }
 }

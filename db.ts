@@ -204,8 +204,8 @@ export const dbConnect = async (dbInfo: DatabaseInfo) => {
                     actualData.shift()
                     const newDiffData = []
                     for (let i of diffData) {
-                        const replacedData = i.replaceAll("\r\n", "\n")
-                        newDiffData.push(replacedData.replaceAll("model ", ""))
+                        const replacedData = i?.replaceAll("\r\n", "\n")
+                        newDiffData.push(replacedData?.replaceAll("model ", ""))
                     }
                     const isDiff = diffData ? true : false
                     generate(isDiff, newDiffData, actualData)
@@ -242,8 +242,8 @@ export const dbConnect = async (dbInfo: DatabaseInfo) => {
                     actualData.shift()
                     const newDiffData = []
                     for (let i of diffData) {
-                        const replacedData = i.replaceAll("\r\n", "\n")
-                        newDiffData.push(replacedData.replaceAll("model ", ""))
+                        const replacedData = i?.replaceAll("\r\n", "\n")
+                        newDiffData.push(replacedData?.replaceAll("model ", ""))
                     }
                     const isDiff = diffData ? true : false
                     generate(isDiff, newDiffData, actualData)

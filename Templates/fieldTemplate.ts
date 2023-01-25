@@ -1,23 +1,7 @@
 
 const generateColumnTemplate = (filename, value, currentcolumn) => {
     let template = ``
-    // template += `\t@Column({ allowNull: ${value['allowNull']},`
 
-    // if (value['key'] === 'PRI') {
-    //     template += ` primaryKey: true, autoIncrement: true,`
-    // }
-    // if (value['enumFields']) {
-    //     template += ` type: sequelize.ENUM${value['enumFields'].slice(4)},`
-    // }
-    // if (value['default']) {
-    //     if (value['default'] === true || value['default'] === false || value['default'] === 'new Date()') {
-    //         template += ` defaultValue: ${value['default']},`
-    //     }
-    //     else {
-    //         template += ` defaultValue: '${value['default']}',`
-    //     }
-    // }
-    // template += ` })\n`
     if (value['kind'] === "enum") {
         if (!value['allowNull']) {
             template += `\t@Field(() => ${value['type'].charAt(0).toUpperCase() + value['type'].slice(1)}, { nullable: true })\n`
